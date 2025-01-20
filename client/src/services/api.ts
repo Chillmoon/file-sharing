@@ -19,6 +19,12 @@ const handleRequest = async <T>(request: Promise<T>) => {
   }
 };
 
+export const googleLogin = (token: string) => {
+  return handleRequest(api.post("/auth/google", { token })).then(
+    (response) => response.data
+  );
+};
+
 export const uploadFile = (formData: FormData) => {
   return handleRequest(
     api.post("/files/upload", formData, {

@@ -7,23 +7,17 @@ import { File } from '../schemas/file.schema';
 export class FileService {
   constructor(@InjectModel('File') private readonly fileModel: Model<File>) {}
 
-  async uploadFile(file: Express.Multer.File): Promise<File> {
+  async uploadFile(file: any): Promise<File> {
     const newFile = new this.fileModel({
       name: file.originalname,
       size: file.size,
       contentType: file.mimetype,
-      content: file.buffer,
+      path: file.path,
     });
     return newFile.save();
   }
 
   async getFiles(): Promise<File[]> {
     return this.fileModel.find().exec();
-  }
-
-  async updateFile(fileId: string, newData: any): Promise<File> {
-    return this.fileModel
-      .findByIdAndUpdate(fileId, newData, { new: true })
-      .exec();
   }
 }

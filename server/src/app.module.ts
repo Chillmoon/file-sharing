@@ -5,8 +5,11 @@ import { FileService } from './services/file.service';
 import { FileController } from './controllers/file.controller';
 import { FolderService } from './services/folder.service';
 import { FolderController } from './controllers/folder.controller';
+import { AuthController } from './controllers/auth.controller';
+import { AuthService } from './services/auth.service';
 import { FileSchema } from './schemas/file.schema';
 import { FolderSchema } from './schemas/folder.schema';
+import { UserSchema } from './schemas/user.schema';
 
 dotenv.config();
 
@@ -18,9 +21,10 @@ dotenv.config();
     MongooseModule.forFeature([
       { name: 'File', schema: FileSchema },
       { name: 'Folder', schema: FolderSchema },
+      { name: 'User', schema: UserSchema },
     ]),
   ],
-  controllers: [FileController, FolderController],
-  providers: [FileService, FolderService],
+  controllers: [FileController, FolderController, AuthController],
+  providers: [FileService, FolderService, AuthService],
 })
 export class AppModule {}

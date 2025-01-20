@@ -2,12 +2,14 @@ import {
   Controller,
   Post,
   Get,
+  Body,
   UploadedFile,
   UseInterceptors,
+  Req,
 } from '@nestjs/common';
 import { FileService } from '../services/file.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as multer from 'multer';
+import { diskStorage } from 'multer';
 
 @Controller('files')
 export class FileController {
@@ -16,10 +18,15 @@ export class FileController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: multer.memoryStorage(),
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          callback(null, Date.now() + file.originalname);
+        },
+      }),
     }),
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(@UploadedFile() file: any) {
     return this.fileService.uploadFile(file);
   }
 

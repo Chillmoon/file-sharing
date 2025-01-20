@@ -4,46 +4,41 @@ const api = axios.create({
   baseURL: "http://localhost:3000",
 });
 
-export const uploadFile = async (formData: FormData) => {
+const handleRequest = async <T>(request: Promise<T>) => {
   try {
-    const response = await api.post("/files/upload", formData, {
+    const response = await request;
+    return response;
+  } catch (error: unknown) {
+    console.error("API Request error:", error);
+
+    if (error instanceof axios.AxiosError) {
+      throw new Error(error.response?.data?.message || "Something went wrong");
+    } else {
+      throw new Error("Something went wrong");
+    }
+  }
+};
+
+export const uploadFile = (formData: FormData) => {
+  return handleRequest(
+    api.post("/files/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    throw error;
-  }
+    })
+  ).then((response) => response.data);
 };
 
-export const getFiles = async () => {
-  try {
-    const response = await api.get("/files");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching files:", error);
-    throw error;
-  }
+export const getFiles = () => {
+  return handleRequest(api.get("/files")).then((response) => response.data);
 };
 
-export const createFolder = async (folderName: string) => {
-  try {
-    const response = await api.post("/folders", { name: folderName });
-    return response.data;
-  } catch (error) {
-    console.error("Error creating folder:", error);
-    throw error;
-  }
+export const createFolder = (folderName: string) => {
+  return handleRequest(api.post("/folders", { name: folderName })).then(
+    (response) => response.data
+  );
 };
 
-export const getFolders = async () => {
-  try {
-    const response = await api.get("/folders");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching folders:", error);
-    throw error;
-  }
+export const getFolders = () => {
+  return handleRequest(api.get("/folders")).then((response) => response.data);
 };

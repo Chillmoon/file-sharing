@@ -7,12 +7,12 @@ import { File } from '../schemas/file.schema';
 export class FileService {
   constructor(@InjectModel('File') private readonly fileModel: Model<File>) {}
 
-  async uploadFile(file: any): Promise<File> {
+  async uploadFile(file: Express.Multer.File): Promise<File> {
     const newFile = new this.fileModel({
       name: file.originalname,
       size: file.size,
       contentType: file.mimetype,
-      path: file.path,
+      content: file.buffer,
     });
     return newFile.save();
   }
